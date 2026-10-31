@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="csrf-token" content="{{ csrf_token }}">
+  <title>WealthWise — Explainable Personal Finance Expert System</title>
+  <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+  <!-- Self-hosted vector icon sprite (zero external font/CDN requests) -->
+  <svg xmlns="http://www.w3.org/2000/svg" style="display:none;" aria-hidden="true">
+    <symbol id="i-settings" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="3"></circle>
+      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9c.26.6.85 1 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+    </symbol>
+    <symbol id="i-download" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+      <polyline points="7 10 12 15 17 10"></polyline>
+      <line x1="12" y1="15" x2="12" y2="3"></line>
+    </symbol>
+    <symbol id="i-tune" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line>
+      <line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line>
+      <line x1="1" y1="14" x2="7" y2="14"></line>
+      <line x1="9" y1="8" x2="15" y2="8"></line>
+      <line x1="17" y1="16" x2="23" y2="16"></line>
+    </symbol>
+    <symbol id="i-health" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+      <path d="M9 12h6"></path><path d="M12 9v6"></path>
+    </symbol>
+    <symbol id="i-balance" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="12" y1="3" x2="12" y2="21"></line>
+      <path d="M5 7h14"></path>
+      <path d="M5 7l-3 7h6l-3-7z"></path>
+      <path d="M19 7l-3 7h6l-3-7z"></path>
+      <line x1="8" y1="21" x2="16" y2="21"></line>
+    </symbol>
+    <symbol id="i-payments" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="2" y="6" width="20" height="12" rx="2"></rect>
+      <circle cx="12" cy="12" r="2.5"></circle>
+      <path d="M6 12h.01M18 12h.01"></path>
+    </symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+    </symbol>
+    <symbol id="i-savings" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <ellipse cx="12" cy="6" rx="8" ry="3"></ellipse>
+      <path d="M4 6v6c0 1.66 3.58 3 8 3s8-1.34 8-3V6"></path>
+      <path d="M4 12v6c0 1.66 3.58 3 8 3s8-1.34 8-3v-6"></path>
+    </symbol>
+    <symbol id="i-card" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="2" y="5" width="20" height="14" rx="2"></rect>
+      <line x1="2" y1="10" x2="22" y2="10"></line>
+    </symbol>
+    <symbol id="i-bank" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+      <polygon points="12 2 2 7 22 7 12 2"></polygon>
+      <line x1="6" y1="10" x2="6" y2="17"></line>
+      <line x1="10" y1="10" x2="10" y2="17"></line>
+      <line x1="14" y1="10" x2="14" y2="17"></line>
+      <line x1="18" y1="10" x2="18" y2="17"></line>
+      <line x1="3" y1="20" x2="21" y2="20"></line>
+    </symbol>
+    <symbol id="i-trend" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+      <polyline points="17 6 23 6 23 12"></polyline>
+    </symbol>
+    <symbol id="i-bolt" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+      <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+    </symbol>
+    <symbol id="i-verified" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+      <polyline points="9 12 11 14 15 10"></polyline>
+    </symbol>
+    <symbol id="i-report" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10"></circle>
+      <line x1="12" y1="8" x2="12" y2="12"></line>
+      <line x1="12" y1="16" x2="12.01" y2="16"></line>
+    </symbol>
+    <symbol id="i-spark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 3l1.9 5.8a2 2 0 0 0 1.3 1.3L21 12l-5.8 1.9a2 2 0 0 0-1.3 1.3L12 21l-1.9-5.8a2 2 0 0 0-1.3-1.3L3 12l5.8-1.9a2 2 0 0 0 1.3-1.3L12 3z"></path>
+    </symbol>
+    <symbol id="i-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="18" y1="6" x2="6" y2="18"></line>
+      <line x1="6" y1="6" x2="18" y2="18"></line>
+    </symbol>
+  </svg>
+
+  <!-- ========================================================================
+       1. Apple Minimalist Navigation Bar
+       ======================================================================== -->
+  <header class="navbar">
+    <div class="nav-container">
+      <div class="nav-brand">
+        <div class="brand-icon-box">
+          <img src="{{ url_for('static', filename='img/logo.svg') }}" alt="WealthWise" class="brand-logo">
+        </div>
+        <div class="brand-text">
+          <span class="brand-name">WealthWise</span>
+        </div>
+      </div>
+
+      <div class="nav-actions">
+        <!-- AI Engine Status Chip (Click to configure optional Gemini API Key) -->
+        <button type="button" class="ai-status-chip" data-action="open-gemini">
+          <span class="pulse-dot" id="ai-pulse-dot"></span>
+          <span id="ai-chip-label">Offline Rule Engine</span>
+          <svg class="icon-svg icon-sm" aria-hidden="true"><use href="#i-settings"></use></svg>
+        </button>
+
+        <button type="button" class="btn-apple-primary" data-action="export-pdf">
+          <svg class="icon-svg icon-sm" aria-hidden="true"><use href="#i-download"></use></svg>
+          <span>Download Plan (PDF)</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ========================================================================
+       2. Main Content
+       ======================================================================== -->
+  <main class="main-container">
+
+    <!-- Hero Header -->
+    <div class="hero-section">
+      <h1 class="hero-title">Your Personal Financial Diagnostic</h1>
+      <p class="hero-subtitle">
+        Adjust your live financial profile below. WealthWise runs forward and backward chaining with MYCIN certainty factors to size borrowing limits, protection shields, and asset allocations from one rule base.
+      </p>
+    </div>
+
+    <!-- Section 1: Intake & Health Diagnostic Grid -->
+    <div class="dashboard-grid">
+
+      <!-- LEFT: Interactive Financial Profile Form -->
+      <section class="apple-card intake-card">
+        <div class="card-header">
+          <div class="card-title">
+            <svg class="icon-svg" style="color:var(--pastel-sky-solid);" aria-hidden="true"><use href="#i-tune"></use></svg>
+            <span>Financial Numbers</span>
+          </div>
+          <span class="apple-pill sky">Live Simulator</span>
+        </div>
+
+        <form id="profile-form">
+
+          <!-- Monthly Income -->
+          <div class="control-group">
+            <div class="control-header">
+              <label for="f_income" class="control-label">Monthly Take-Home Income</label>
+              <div class="control-value-display" id="disp_income">₹1,20,000</div>
+            </div>
+            <div class="range-wrap">
+              <input type="range" id="f_income" min="0" max="600000" step="5000" value="120000" data-input="profile">
+            </div>
+            <div class="range-marks">
+              <span>₹0</span>
+              <span>₹1.5L</span>
+              <span>₹3L</span>
+              <span>₹6L+</span>
+            </div>
+          </div>
+
+          <!-- Existing Monthly EMIs -->
+          <div class="control-group">
+            <div class="control-header">
+              <label for="f_emis" class="control-label">Existing Monthly EMIs</label>
+              <div class="control-value-display" id="disp_emis">₹18,000</div>
+            </div>
+            <div class="range-wrap">
+              <input type="range" id="f_emis" min="0" max="200000" step="1000" value="18000" data-input="profile">
+            </div>
+            <div class="range-marks">
+              <span>₹0 (Debt Free)</span>
+              <span>₹50k</span>
+              <span>₹1L</span>
+              <span>₹2L</span>
+            </div>
+          </div>
+
+          <!-- CIBIL Credit Score -->
+          <div class="control-group">
+            <div class="control-header">
+              <label for="f_credit" class="control-label">CIBIL Credit Score</label>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <span class="control-value-display" id="disp_credit">785</span>
+                <span class="apple-pill mint" id="cibil-tier-badge">Excellent</span>
+              </div>
+            </div>
+            <div class="range-wrap">
+              <input type="range" id="f_credit" min="300" max="900" step="5" value="785" data-input="profile">
+            </div>
+            <div class="range-marks">
+              <span>300 (Poor)</span>
+              <span>650 (Fair)</span>
+              <span>750 (Good)</span>
+              <span>900 (Top Tier)</span>
+            </div>
+          </div>
+
+          <!-- Age & Dependents Row -->
+          <div class="form-row">
+            <div class="control-group half">
+              <label for="f_age" class="control-label">Your Age: <b id="disp_age">28</b> yrs</label>
+              <input type="range" id="f_age" min="18" max="70" step="1" value="28" data-input="profile">
+            </div>
+            <div class="control-group half">
+              <label for="f_deps" class="control-label">Dependents: <b id="disp_deps">1</b></label>
+              <input type="range" id="f_deps" min="0" max="5" step="1" value="1" data-input="profile">
+            </div>
+          </div>
+
+          <!-- Employment & Risk Tolerance Row -->
+          <div class="form-row">
+            <div class="control-group half">
+              <label for="f_employment" class="control-label">Employment Status</label>
+              <select id="f_employment" class="select-input" data-change="profile">
+                <option value="Salaried" selected>Salaried</option>
+                <option value="Self-Employed">Self-Employed</option>
+                <option value="Business Owner">Business Owner</option>
+                <option value="Student">Student</option>
+                <option value="Unemployed">Unemployed</option>
+              </select>
+            </div>
+
+            <div class="control-group half">
+              <label for="f_risk" class="control-label">Risk Tolerance</label>
+              <select id="f_risk" class="select-input" data-change="profile">
+                <option value="High" selected>High (Growth)</option>
+                <option value="Medium">Medium (Balanced)</option>
+                <option value="Low">Low (Conservative)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Spend Category & Financial Goal -->
+          <div class="form-row">
+            <div class="control-group half">
+              <label for="f_spend" class="control-label">Top Spending Habit</label>
+              <select id="f_spend" class="select-input" data-change="profile">
+                <option value="Online Shopping" selected>Online Shopping</option>
+                <option value="Dining & Lifestyle">Dining &amp; Food Apps</option>
+                <option value="Travel">Travel &amp; Flights</option>
+                <option value="Fuel & Commute">Fuel &amp; Commute</option>
+                <option value="General">General Spends</option>
+              </select>
+            </div>
+
+            <div class="control-group half">
+              <label for="f_goal" class="control-label">Primary Financial Goal</label>
+              <select id="f_goal" class="select-input" data-change="profile">
+                <option value="Wealth Creation" selected>Wealth Creation</option>
+                <option value="Home Purchase">Home Purchase</option>
+                <option value="Debt Free">Debt Freedom</option>
+                <option value="Child Education">Child Education</option>
+                <option value="Retirement Planning">Retirement Planning</option>
+                <option value="Tax Saving">Tax Saving</option>
+                <option value="Emergency Fund">Emergency Fund</option>
+              </select>
+            </div>
+          </div>
+
+        </form>
+      </section>
+
+      <!-- RIGHT: Live Health Diagnostic Card -->
+      <section class="apple-card diagnostic-card">
+        <div class="card-header">
+          <div class="card-title">
+            <svg class="icon-svg" style="color:var(--pastel-mint-solid);" aria-hidden="true"><use href="#i-health"></use></svg>
+            <span>Health Diagnostic</span>
+          </div>
+          <span class="apple-pill mint" id="fhi-status-badge">Evaluating…</span>
+        </div>
+
+        <div class="score-hero">
+          <div class="gauge-box">
+            <svg id="svg-apple-gauge" viewBox="0 0 200 170" class="gauge-svg">
+              <defs>
+                <linearGradient id="meter-mint-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stop-color="#34c759" />
+                  <stop offset="100%" stop-color="#30b0c7" />
+                </linearGradient>
+                <linearGradient id="meter-sky-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stop-color="#007aff" />
+                  <stop offset="100%" stop-color="#5856d6" />
+                </linearGradient>
+                <linearGradient id="meter-amber-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stop-color="#ff9500" />
+                  <stop offset="100%" stop-color="#ff3b30" />
+                </linearGradient>
+              </defs>
+
+              <circle cx="100" cy="100" r="70"
+                      fill="none"
+                      stroke="#e5e7eb"
+                      stroke-width="12"
+                      stroke-linecap="round"
+                      stroke-dasharray="293.2 440"
+                      transform="rotate(150 100 100)" />
+
+              <circle id="gauge-arc-fill" cx="100" cy="100" r="70"
+                      fill="none"
+                      stroke="url(#meter-mint-grad)"
+                      stroke-width="12"
+                      stroke-linecap="round"
+                      stroke-dasharray="10 440"
+                      transform="rotate(150 100 100)"
+                      style="transition: stroke-dasharray 0.6s cubic-bezier(0.4, 0, 0.2, 1);" />
+
+              <text id="gauge-num" x="100" y="98" text-anchor="middle" class="gauge-text-val">…</text>
+              <text x="100" y="118" text-anchor="middle" class="gauge-text-label">HEALTH SCORE</text>
+            </svg>
+
+            <div class="gauge-status-wrapper">
+              <span class="apple-pill mint" id="gauge-pill-text">Evaluating…</span>
+            </div>
+          </div>
+
+          <!-- Plain-English Diagnostic Summary + Forward Trace + Backward Chaining -->
+          <div class="score-summary">
+            <h3 class="summary-title" id="summary-headline">Running Inference Engine…</h3>
+            <p class="summary-text" id="summary-body">
+              Evaluating production rules and certainty factors for your financial profile.
+            </p>
+            <div id="override-alert-box"></div>
+
+            <details class="rule-trace">
+              <summary>Forward-chaining rules fired (<span id="rule-trace-count">0</span>)</summary>
+              <ol id="rule-trace-list"></ol>
+            </details>
+
+            <details class="rule-trace goal-seek-panel" id="goal-seek-details">
+              <summary>What would I need to change? (Backward chaining)</summary>
+              <div class="goal-seek-controls">
+                <label for="goal-seek-target" class="sr-only">Target milestone</label>
+                <select id="goal-seek-target" class="select-input goal-seek-select" data-change="goal-seek">
+                  <option value="loan.eligible:true" selected>Qualify for an unsecured loan (loan.eligible)</option>
+                  <option value="insurance.term_recommended:true">Trigger term life cover rule (insurance.term_recommended)</option>
+                  <option value="investment.risk_category:Aggressive">Reach Aggressive equity allocation (75% Equity)</option>
+                  <option value="investment.tax_tip:true">Unlock Sec 80CCD(1B) NPS tax shield</option>
+                </select>
+              </div>
+              <div id="goal-seek-output" class="goal-seek-output">Evaluating counterfactual path…</div>
+            </details>
+          </div>
+        </div>
+
+        <!-- 4 Key Vitals Grid -->
+        <div class="vitals-grid">
+
+          <!-- Vital 1: Debt Burden -->
+          <div class="vital-card">
+            <div class="vital-header">
+              <span class="vital-label">DEBT BURDEN (LOANS)</span>
+              <svg class="icon-svg vital-icon" id="icon-foir" style="color:var(--pastel-mint-solid);" aria-hidden="true"><use href="#i-balance"></use></svg>
+            </div>
+            <div class="vital-val" id="vital-foir">15.0%</div>
+            <div class="vital-sub" id="vital-foir-sub">Running rule engine</div>
+          </div>
+
+          <!-- Vital 2: Max Borrowing Capacity -->
+          <div class="vital-card">
+            <div class="vital-header">
+              <span class="vital-label">SAFE BORROWING LIMIT</span>
+              <svg class="icon-svg vital-icon" style="color:var(--pastel-sky-solid);" aria-hidden="true"><use href="#i-payments"></use></svg>
+            </div>
+            <div class="vital-val" id="vital-loan">…</div>
+            <div class="vital-sub" id="vital-loan-sub">Running rule engine</div>
+          </div>
+
+          <!-- Vital 3: Life Shield Cover -->
+          <div class="vital-card">
+            <div class="vital-header">
+              <span class="vital-label">RECOMMENDED LIFE COVER</span>
+              <svg class="icon-svg vital-icon" style="color:var(--pastel-mint-solid);" aria-hidden="true"><use href="#i-shield"></use></svg>
+            </div>
+            <div class="vital-val" id="vital-insurance">…</div>
+            <div class="vital-sub" id="vital-insurance-sub">Running rule engine</div>
+          </div>
+
+          <!-- Vital 4: Emergency Reserve -->
+          <div class="vital-card">
+            <div class="vital-header">
+              <span class="vital-label">EMERGENCY SAVINGS FUND</span>
+              <svg class="icon-svg vital-icon" style="color:var(--pastel-amber-solid);" aria-hidden="true"><use href="#i-savings"></use></svg>
+            </div>
+            <div class="vital-val" id="vital-runway">…</div>
+            <div class="vital-sub" id="vital-runway-sub">Running rule engine</div>
+          </div>
+
+        </div>
+      </section>
+
+    </div>
+
+    <!-- Section 2: Dynamic Tailored Recommendations (4 Distinct Categorized Sections) -->
+    <div class="recommendations-container" id="recommendations-root">
+
+      <div class="category-block-header">
+        <div>
+          <h2 class="section-title">Tailored Institutional Recommendations</h2>
+          <p class="section-desc">
+            Sized directly from the rule engine across RBI, SEBI, and IRDAI rules of thumb — 3 matched options per pillar.
+          </p>
+        </div>
+        <div id="ai-evaluation-indicator" class="ai-eval-badge analyzing">
+          <span class="pulse-dot"></span>
+          <span id="ai-eval-text">Evaluating Rule Base…</span>
+        </div>
+      </div>
+
+      <!-- Category 1: Credit Cards (3 Options) -->
+      <section class="apple-card category-section">
+        <div class="category-section-top">
+          <div class="category-title-group">
+            <span class="category-icon-box card-icon">
+              <svg class="icon-svg" aria-hidden="true"><use href="#i-card"></use></svg>
+            </span>
+            <div>
+              <h3 class="category-heading">Credit Cards &amp; Reward Multipliers</h3>
+              <p class="category-subheading">Matched to your credit tier and dominant spend category, with FD-backed credit-builder fallbacks when gated.</p>
+            </div>
+          </div>
+          <span class="apple-pill sky">3 Options Matched</span>
+        </div>
+        <div class="products-grid" id="cards-container"></div>
+      </section>
+
+      <!-- Category 2: Loans & Credit Lines (3 Options) -->
+      <section class="apple-card category-section">
+        <div class="category-section-top">
+          <div class="category-title-group">
+            <span class="category-icon-box loan-icon">
+              <svg class="icon-svg" aria-hidden="true"><use href="#i-bank"></use></svg>
+            </span>
+            <div>
+              <h3 class="category-heading">Personal &amp; Asset-Backed Credit</h3>
+              <p class="category-subheading">60-month reverse-EMI capacities inside statutory FOIR ceilings, routing ineligible profiles to secured options.</p>
+            </div>
+          </div>
+          <span class="apple-pill sky">3 Options Matched</span>
+        </div>
+        <div class="products-grid" id="loans-container"></div>
+      </section>
+
+      <!-- Category 3: Life & Health Insurance (3 Options) -->
+      <section class="apple-card category-section">
+        <div class="category-section-top">
+          <div class="category-title-group">
+            <span class="category-icon-box ins-icon">
+              <svg class="icon-svg" aria-hidden="true"><use href="#i-shield"></use></svg>
+            </span>
+            <div>
+              <h3 class="category-heading">Life &amp; Health Insurance Shields</h3>
+              <p class="category-subheading">Human Life Value mortality cover when dependents rely on your income, paired with medical hospital cushions.</p>
+            </div>
+          </div>
+          <span class="apple-pill mint">3 Options Matched</span>
+        </div>
+        <div class="products-grid" id="insurance-container"></div>
+      </section>
+
+      <!-- Category 4: Wealth & Investment Portfolios (3 Options) -->
+      <section class="apple-card category-section">
+        <div class="category-section-top">
+          <div class="category-title-group">
+            <span class="category-icon-box inv-icon">
+              <svg class="icon-svg" aria-hidden="true"><use href="#i-trend"></use></svg>
+            </span>
+            <div>
+              <h3 class="category-heading">Wealth &amp; Investment Portfolios</h3>
+              <p class="category-subheading">Rule-scored equity/debt/gold allocations and disciplined monthly SIP sizing.</p>
+            </div>
+          </div>
+          <span class="apple-pill purple">3 Options Matched</span>
+        </div>
+        <div class="products-grid" id="investments-container"></div>
+      </section>
+
+    </div>
+
+    <!-- Section 3: Simple What-If Stress Check -->
+    <section class="apple-card stress-section">
+      <div class="card-header">
+        <div class="card-title">
+          <svg class="icon-svg" style="color:var(--pastel-amber-solid);" aria-hidden="true"><use href="#i-bolt"></use></svg>
+          <span>What-If Budget Stress Check</span>
+        </div>
+        <span class="apple-pill amber">Safety Stress Test</span>
+      </div>
+      <p class="card-intro">
+        See how your monthly budget holds up if loan interest rates rise or if your monthly income takes an unexpected cut.
+      </p>
+
+      <div class="stress-layout">
+        <div class="stress-inputs">
+
+          <div class="control-group">
+            <div class="control-header">
+              <label for="s_rate" class="control-label">If Loan Interest Rates Rise</label>
+              <div class="control-value-display" id="disp_stress_rate">+1.50% higher interest</div>
+            </div>
+            <div class="range-wrap">
+              <input type="range" id="s_rate" min="0" max="400" step="25" value="150" data-input="stress">
+            </div>
+            <div class="range-marks">
+              <span>0% (Current)</span>
+              <span>+1.50%</span>
+              <span>+2.50%</span>
+              <span>+4.00% (High Hike)</span>
+            </div>
+          </div>
+
+          <div class="control-group">
+            <div class="control-header">
+              <label for="s_income_drop" class="control-label">If Your Monthly Salary Drops</label>
+              <div class="control-value-display" id="disp_stress_income">-15% pay cut</div>
+            </div>
+            <div class="range-wrap">
+              <input type="range" id="s_income_drop" min="0" max="50" step="5" value="15" data-input="stress">
+            </div>
+            <div class="range-marks">
+              <span>0% (Normal)</span>
+              <span>-15% (Cut)</span>
+              <span>-25% (Drop)</span>
+              <span>-50% (Major Loss)</span>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="stress-results">
+          <div class="stress-metrics">
+            <div class="stress-chip">
+              <span class="chip-label">YOUR NEW SALARY</span>
+              <span class="chip-num" id="s_disp_inflow">…</span>
+              <span class="chip-note" id="s_disp_inflow_diff">Running stress test</span>
+            </div>
+            <div class="stress-chip">
+              <span class="chip-label">YOUR NEW LOAN EMIs</span>
+              <span class="chip-num" id="s_disp_emis">…</span>
+              <span class="chip-note" id="s_disp_emis_diff">Running stress test</span>
+            </div>
+            <div class="stress-chip">
+              <span class="chip-label">LOAN SHARE OF SALARY</span>
+              <span class="chip-num" id="s_disp_foir" style="color:var(--pastel-mint-text);">…</span>
+              <span class="chip-note" id="s_disp_foir_status">Running stress test</span>
+            </div>
+          </div>
+
+          <div class="stress-alert" id="stress-banner">
+            <svg class="icon-svg" id="stress-alert-icon" style="color:var(--pastel-mint-solid); flex-shrink:0; margin-top:1px;" aria-hidden="true">
+              <use id="stress-alert-icon-use" href="#i-verified"></use>
+            </svg>
+            <div class="stress-alert-content">
+              <b id="stress-alert-title">Evaluating Stress Scenario…</b>
+              <p id="stress-alert-desc">Calculating debt burden under rate and income shocks.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Section 4: Personalized Plan Download Banner -->
+    <div class="export-banner">
+      <div>
+        <h3 class="export-title">Save your personalized financial plan</h3>
+        <p class="export-subtitle">Download a 2-page PDF summary of your health score, borrowing limits, protection covers, 4-pillar action plan, and SHA-256 fingerprint.</p>
+      </div>
+      <button type="button" class="btn-apple-primary large" data-action="export-pdf">
+        <svg class="icon-svg" aria-hidden="true"><use href="#i-download"></use></svg>
+        <span>Download Financial Plan (PDF)</span>
+      </button>
+    </div>
+
+  </main>
+
+  <!-- ========================================================================
+       3. Apple Modal Sheet: Google Gemini API Configuration
+       ======================================================================== -->
+  <div class="modal-overlay" id="gemini-modal" role="dialog" aria-modal="true" aria-labelledby="gemini-modal-title">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div class="modal-title" id="gemini-modal-title">
+          <svg class="icon-svg" style="color:var(--pastel-sky-solid);" aria-hidden="true"><use href="#i-spark"></use></svg>
+          <span>Google Gemini AI Integration</span>
+        </div>
+        <button type="button" class="modal-close-btn" data-action="close-gemini" aria-label="Close">
+          <svg class="icon-svg icon-sm" aria-hidden="true"><use href="#i-close"></use></svg>
+        </button>
+      </div>
+
+      <p class="modal-desc">
+        Optionally connect Google Gemini to generate product recommendations. When a key is set, your bounded numeric profile and allowlisted categories are sent to Google; your name is never sent.
+      </p>
+
+      <div class="control-group">
+        <label for="gemini-key-input" class="control-label" style="display:block; margin-bottom:6px;">
+          Google Gemini API Key
+        </label>
+        <input type="password" id="gemini-key-input" class="key-input" placeholder="AIzaSy..." autocomplete="off">
+        <span style="display:block; font-size:11px; color:var(--text-tertiary); margin-top:4px;">
+          Held in this browser tab's session storage only and cleared when the tab closes.
+        </span>
+      </div>
+
+      <div style="background:var(--bg-subtle); border:1px solid var(--border-hairline); border-radius:var(--radius-sm); padding:10px 12px; font-size:12px; color:var(--text-secondary);">
+        <b>Current Engine:</b> <span id="modal-current-engine">Offline Neuro-Symbolic Rule Engine</span>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn-secondary" data-action="clear-gemini-key">Clear Key</button>
+        <button type="button" class="btn-apple-primary" data-action="save-gemini-key">Save &amp; Activate Gemini</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <span class="brand-name">WealthWise</span>
+        <span class="footer-tagline">Educational expert-system demo</span>
+      </div>
+      <div class="footer-meta">
+        <span>Rules follow general RBI, SEBI and IRDAI rules of thumb. Not financial advice.</span>
+        <span>100% local assets &amp; inference. Nothing leaves your machine unless you add a Gemini key.</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>

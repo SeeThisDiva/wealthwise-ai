@@ -1,0 +1,6 @@
+flask>=3.0.3,<4
+reportlab>=4.0.0,<5
+pydantic>=2.7.0,<3
+rich>=13.7.0,<16
+requests>=2.32.0,<3
+python-dotenv>=1.0.0,<2

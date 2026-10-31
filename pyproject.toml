@@ -1,0 +1,53 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "wealthwise-ai"
+version = "1.0.0"
+description = "Explainable personal finance expert system with forward/backward chaining and MYCIN certainty factors"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [
+    { name = "SeeThisDiva" }
+]
+dependencies = [
+    "flask>=3.0.3,<4",
+    "reportlab>=4.0.0,<5",
+    "pydantic>=2.7.0,<3",
+    "rich>=13.7.0,<16",
+    "requests>=2.32.0,<3",
+    "python-dotenv>=1.0.0,<2",
+]
+
+[project.optional-dependencies]
+dev = [
+    "ruff>=0.5.0",
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+]
+
+[project.scripts]
+wealthwise = "main:main"
+wealthwise-cli = "main_cli:run_cli"
+
+[tool.setuptools]
+py-modules = ["advisor", "main", "main_cli"]
+packages = ["core", "data", "knowledge", "reports", "web"]
+
+[tool.setuptools.package-data]
+web = ["templates/*.html", "static/**/*"]
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+addopts = "-ra -q"
+testpaths = ["tests"]
+pythonpath = ["."]
+
+[tool.ruff]
+target-version = "py310"
+line-length = 120
+
+[tool.ruff.lint]
+select = ["E9", "F", "B", "I", "UP", "S102", "S307"]
